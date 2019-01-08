@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	<!-- 创建一个对象 配置一个 bean -->
+	
+	<!-- 方式一、无参构造器 -->
+	<bean id="address" class="cn.tedu.spring.createBean.Address"/>
+	
+    <!-- 方式二、通过静态方法 -->
+    <bean id="calendar" class="java.util.Calendar" factory-method="getInstance"/>
+    
+    <!-- 方式三、通过实例工厂 -->
+    <bean id="personFactory" class="cn.tedu.spring.createBean.PersonFactory" ></bean>
+    <bean id="person"  factory-method="getPerson" factory-bean="personFactory"></bean>
+	
+</beans>

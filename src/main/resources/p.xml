@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!-- 配置 bean -->
+	<bean id="dao" class="cn.tedu.spring.p.ref.Dao"></bean>
+	<bean id="service" class="cn.tedu.spring.p.ref.Service">
+		<!-- 通过 ref 属性值指定当前属性指向哪一个 bean! -->
+		<property name="dao" ref="dao"></property>
+	</bean>
+
+	<!-- 声明使用内部 bean -->
+	<bean id="service2" class="cn.tedu.spring.p.ref.Service">
+		<property name="dao">
+			<!-- 内部 bean, 类似于匿名内部类对象. 不能被外部的 bean 来引用, 也没有必要设置 id 属性 -->
+			<bean class="cn.tedu.spring.p.ref.Dao">
+				<property name="dataSource" value="c3p0"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="action" class="cn.tedu.spring.p.ref.Action">
+		<property name="service" ref="service2"></property>
+		<!-- 设置级联属性(了解) -->
+		<property name="service.dao.dataSource" value="DBCP123"></property>
+	</bean>
+	
+	<bean id="car" class="cn.tedu.spring.p.ref.Car">
+		<constructor-arg value="KUGA" index="1"></constructor-arg>
+		<constructor-arg value="ChangAnFord" index="0"></constructor-arg>
+		<constructor-arg value="250000" type="float"></constructor-arg>
+	</bean>
+	<bean id="car2" class="cn.tedu.spring.p.ref.Car">
+		<constructor-arg value="ChangAnMazda"></constructor-arg>
+		<!-- 若字面值中包含特殊字符, 则可以使用 DCDATA 来进行赋值. (了解) -->
+		<constructor-arg>
+			<value><![CDATA[<ATARZA>]]></value>
+		</constructor-arg>
+		<constructor-arg value="180" type="int"></constructor-arg>
+	</bean>
+	<!-- 装配集合属性 -->
+	<bean id="user" class="cn.tedu.spring.p.ref.User">
+		<property name="userName" value="Jack"></property>
+		<property name="cars">
+			<!-- 使用 list 元素来装配集合属性 -->
+			<list>
+				<ref bean="car"/>
+				<ref bean="car2"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 声明集合类型的 bean -->
+	<util:list id="cars">
+		<ref bean="car"/>
+		<ref bean="car2"/>
+	</util:list>
+	
+		<bean id="user2" class="cn.tedu.spring.p.ref.User">
+		<property name="userName" value="Rose"></property>
+		<!-- 引用外部声明的 list -->
+		<property name="cars" ref="cars"></property>
+	</bean>
+	
+	<bean id="user3" class="cn.tedu.spring.p.ref.User"
+		p:cars-ref="cars" p:userName="Titannic"></bean>
+		
+	<!-- bean 的配置能够继承吗 ? 使用 parent 来完成继承 -->	
+	<bean id="user4" parent="user" p:userName="Bob"></bean>
+	
+	<!-- 测试 depents-on -->	
+	<bean id="user5" parent="user" p:userName="Backham" depends-on="user6"></bean>
+		
+	<bean id="user6" parent="user" p:userName="维多利亚"></bean>
+</beans>
